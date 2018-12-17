@@ -50,7 +50,7 @@ double timeit(hash_function func, int inlen, int outlen) {
 }
 
 int main() {
-  test_implementations();
+  //test_implementations();
   //printf("Haraka-256          1x: %f cycles \n", timeit(haraka256, 32, 32));
   //printf("Haraka-256          4x: %f cycles \n", timeit(haraka256_4x, 4*32, 4*32));
   //printf("Haraka-256          8x: %f cycles \n", timeit(haraka256_8x, 8*32, 8*32));
