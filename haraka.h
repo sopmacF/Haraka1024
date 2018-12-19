@@ -143,5 +143,31 @@ void haraka512_8x(unsigned char *out, const unsigned char *in);
 void haraka1024(unsigned char *out, const unsigned char *in);
 void haraka1024_split(unsigned char *out, const unsigned char *in);
 
+/* Tweak constants with seed */
+void tweak_constants(const unsigned char *pk_seed, const unsigned char *sk_seed,
+	                 unsigned long long seed_length);
+
+/* Haraka Sponge */
+void haraka_S(unsigned char *out, unsigned long long outlen,
+              const unsigned char *in, unsigned long long inlen);
+
+/* Applies the 512-bit Haraka permutation to in. */
+void haraka512_perm(unsigned char *out, const unsigned char *in);
+
+//######################################## FC
+
+void haraka_1024S(unsigned char *out,  const unsigned char *in);
+
+void haraka_1024S_NI(unsigned char *out,  const unsigned char *in);
+
+static void haraka_S_absorb_NI(unsigned char *s, unsigned int r,
+                            const unsigned char *m, unsigned long long mlen,
+                            unsigned char p);
+
+static void haraka_S_squeezeblocks_NI(unsigned char *h, unsigned long long nblocks,
+                                   unsigned char *s, unsigned int r);
+
+void haraka512_perm_NI(unsigned char *out, const unsigned char *in);
+
 #endif
 
