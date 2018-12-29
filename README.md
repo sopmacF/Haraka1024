@@ -5,7 +5,6 @@ Expand Haraka https://github.com/kste/haraka by adding a Haraka-1024 function, w
 # Results
 
 Version                      | clock cycles
------------------------------|---------------------
 Haraka-512/AES_NI            | 65.378000 cycles
 -----------------------------|---------------------
 Haraka-1024/AES_NI           | 208.441000 cycles (our implementation)
