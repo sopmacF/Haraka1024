@@ -4,7 +4,7 @@ Expand Haraka https://github.com/kste/haraka by adding a Haraka-1024 function, w
 
 # Results
 
-Haraka-512/AES_NI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;65.378000 cycles<br>
+Haraka-512/AES_NI<tab align=right>65.378000 cycles<br>
 Haraka-1024/AES_NI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;208.441000 cycles (our implementation)<br>
 Haraka-1024/AES_NI (3x 512)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;230.070000 cycles<br>
 Haraka-1024 sponge/AES_NI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;493.704000 cycles<br> 
