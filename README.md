@@ -5,7 +5,7 @@ Expand Haraka https://github.com/kste/haraka by adding a Haraka-1024 function, w
 # Results
 
 Haraka-512/AES_NI              65.378000 cycles<br>
-Haraka-1024/AES_NI            208.441000 cycles (our implementation)
-Haraka-1024/AES_NI (3x 512)   230.070000 cycles 
-Haraka-1024 sponge/AES_NI     493.704000 cycles 
-Haraka-1024 sponge          18361.418000 cycles (without AES-NI support)
+Haraka-1024/AES_NI            208.441000 cycles (our implementation)<br>
+Haraka-1024/AES_NI (3x 512)   230.070000 cycles<br>
+Haraka-1024 sponge/AES_NI     493.704000 cycles<br> 
+Haraka-1024 sponge          18361.418000 cycles (without AES-NI support)<br>
