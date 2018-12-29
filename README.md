@@ -9,4 +9,3 @@ Haraka-1024/AES_NI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
 Haraka-1024/AES_NI (3x 512)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;230.070000 cycles<br>
 Haraka-1024 sponge/AES_NI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;493.704000 cycles<br> 
 Haraka-1024 sponge&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18361.418000 cycles (without AES-NI support)<br>
-Editing Haraka1024_README.md at master · sopmacF_Haraka1024
