@@ -95,22 +95,22 @@ u128 rc[40];
   s4 = _mm_unpackhi_epi16(s4, s5); \
   tmp3  = _mm_unpacklo_epi16(s6, s7); \
   s6  = _mm_unpackhi_epi16(s6, s7); \
-  s1  = _mm_unpacklo_epi16(tmp0, tmp1); \
-  tmp0 = _mm_unpackhi_epi16(tmp0, tmp1); \
-  s3  = _mm_unpacklo_epi16(s0, s2); \
-  tmp1  = _mm_unpackhi_epi16(s0, s2); \
-  s5  = _mm_unpacklo_epi16(tmp2, tmp3); \
-  tmp2 = _mm_unpackhi_epi16(tmp2, tmp3); \
-  s7  = _mm_unpacklo_epi16(s4, s6); \
-  tmp3  = _mm_unpackhi_epi16(s4, s6); \
-  s0 = _mm_unpacklo_epi16(s1, s5); \
-  s1 = _mm_unpackhi_epi16(s1, s5); \
-  s4 = _mm_unpacklo_epi16(s3, s7); \
-  s5 = _mm_unpackhi_epi16(s3, s7); \
-  s2 = _mm_unpacklo_epi16(tmp0, tmp2); \
-  s3 = _mm_unpackhi_epi16(tmp0, tmp2); \
-  s6 = _mm_unpacklo_epi16(tmp1, tmp3); \
-  s7 = _mm_unpackhi_epi16(tmp1, tmp3);
+  s1  = _mm_unpacklo_epi16(s2, tmp0); \
+  tmp0 = _mm_unpackhi_epi16(s2, tmp0); \
+  s3  = _mm_unpacklo_epi16(s0, tmp1); \
+  tmp1  = _mm_unpackhi_epi16(s0, tmp1); \
+  s5  = _mm_unpacklo_epi16(s6, tmp2); \
+  tmp2 = _mm_unpackhi_epi16(s6, tmp2); \
+  s7  = _mm_unpacklo_epi16(s4, tmp3); \
+  tmp3  = _mm_unpackhi_epi16(s4, tmp3); \
+  s0 = _mm_unpacklo_epi16(tmp2, s1); \
+  s1 = _mm_unpackhi_epi16(tmp2, s1); \
+  s4 = _mm_unpacklo_epi16(tmp3, s3); \
+  s5 = _mm_unpackhi_epi16(tmp3, s3); \
+  s2 = _mm_unpacklo_epi16(tmp0, s5); \
+  s3 = _mm_unpackhi_epi16(tmp0, s5); \
+  s6 = _mm_unpacklo_epi16(tmp1, s7); \
+  s7 = _mm_unpackhi_epi16(tmp1, s7);
 
 
 #define TRUNCSTORE(out, s0, s1, s2, s3) \

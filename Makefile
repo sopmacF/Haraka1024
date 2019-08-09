@@ -1,6 +1,7 @@
 C=gcc
 RM=rm -f
-CFLAGS=-O3 -march=native -funroll-all-loops -fomit-frame-pointer -Wint-conversion
+#CFLAGS=-O3 -march=native -funroll-all-loops -fomit-frame-pointer -Wint-conversion
+CFLAGS=-Wall -Wextra -Wpedantic -O3 -march=native -funroll-all-loops -fomit-frame-pointer -Wint-conversion
 SRCS=main.c haraka.c
 OBJS=$(subst .c,.o,$(SRCS))
 OUTFILE="haraka"

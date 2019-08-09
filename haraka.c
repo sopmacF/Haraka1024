@@ -751,57 +751,42 @@ void haraka1024_split(unsigned char *out, const unsigned char *in) {
 }
 
 void haraka1024(unsigned char *out, const unsigned char *in) {
-  u128 s[8], tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
+	  u128 s[8], tmp0, tmp1, tmp2, tmp3;
 
-  s[0] = LOAD(in);
-  s[1] = LOAD(in + 16);
-  s[2] = LOAD(in + 32);
-  s[3] = LOAD(in + 48);
-  s[4] = LOAD(in + 64);
-  s[5] = LOAD(in + 80);
-  s[6] = LOAD(in + 96);
-  s[7] = LOAD(in + 112);
+	  s[0] = LOAD(in);
+	  s[1] = LOAD(in + 16);
+	  s[2] = LOAD(in + 32);
+	  s[3] = LOAD(in + 48);
+	  s[4] = LOAD(in + 64);
+	  s[5] = LOAD(in + 80);
+	  s[6] = LOAD(in + 96);
+	  s[7] = LOAD(in + 112);
 
-  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 0);
-  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
+	  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 0);
+	  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
 
-  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 8);
-  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
+	  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 16);
+	  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
 
-  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 16);
-  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
+	  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 32);
+	  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
 
-  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 24);
-  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
+	  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 48);
+	  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
 
-  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 32);
-  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
+	  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 64);
+	  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
 
-  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 48);
-  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
+	  s[0] = _mm_xor_si128(s[0], LOAD(in));
+	  s[1] = _mm_xor_si128(s[1], LOAD(in + 16));
+	  s[2] = _mm_xor_si128(s[2], LOAD(in + 32));
+	  s[3] = _mm_xor_si128(s[3], LOAD(in + 48));
+	  s[4] = _mm_xor_si128(s[4], LOAD(in + 64));
+	  s[5] = _mm_xor_si128(s[5], LOAD(in + 80));
+	  s[6] = _mm_xor_si128(s[6], LOAD(in + 96));
+	  s[7] = _mm_xor_si128(s[7], LOAD(in + 112));
 
-  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 64);
-  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
-
-  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 80);
-  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
-
-  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 96);
-  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
-
-  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 112);
-  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
-
-  s[0] = _mm_xor_si128(s[0], LOAD(in));
-  s[1] = _mm_xor_si128(s[1], LOAD(in + 16));
-  s[2] = _mm_xor_si128(s[2], LOAD(in + 32));
-  s[3] = _mm_xor_si128(s[3], LOAD(in + 48));
-  s[4] = _mm_xor_si128(s[4], LOAD(in + 64));
-  s[5] = _mm_xor_si128(s[5], LOAD(in + 80));
-  s[6] = _mm_xor_si128(s[6], LOAD(in + 96));
-  s[7] = _mm_xor_si128(s[7], LOAD(in + 112));
-
-  TRUNCSTORE4(out, s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
+	  TRUNCSTORE4(out, s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
 }
 
 

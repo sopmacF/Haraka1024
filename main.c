@@ -60,9 +60,9 @@ int main() {
   //printf("Haraka-512          8x: %f cycles \n", timeit(haraka512_8x, 8*64, 8*32));
 
   printf("Haraka-1024/AES_NI          %f cycles \n", timeit(haraka1024, 128, 32));
-  printf("Haraka-1024/AES_NI (3x 512) %f cycles \n", timeit(haraka1024_split, 128, 32));
+  //printf("Haraka-1024/AES_NI (3x 512) %f cycles \n", timeit(haraka1024_split, 128, 32));
   printf("Haraka-1024 sponge/AES_NI   %f cycles \n", timeit(haraka_1024S_NI, 128, 32));
-  printf("Haraka-1024 sponge          %f cycles \n", timeit(haraka_1024S, 128, 32));
+  //printf("Haraka-1024 sponge          %f cycles \n", timeit(haraka_1024S, 128, 32));
 
 }
 
