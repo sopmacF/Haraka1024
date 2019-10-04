@@ -16,6 +16,7 @@ u128 rc[80];
 
 #define LOAD(src) _mm_load_si128((u128 *)(src))
 #define STORE(dest, src) _mm_storeu_si128((u128 *)(dest), src)
+#define XOR128(a, b) _mm_xor_si128(a, b)
 
 #define AES2(s0, s1, rci)                 \
   s0 = _mm_aesenc_si128(s0, rc[rci]);     \

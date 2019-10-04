@@ -187,10 +187,14 @@ static void haraka_S_absorb_NI(unsigned char *s, unsigned int r,
     while (mlen >= r)
     {
         // XOR block to state
+        /*
         for (i = 0; i < r; ++i)
         {
             s[i] ^= m[i];
         }
+        */
+        STORE(s, XOR128(LOAD(s), LOAD(m)));
+        STORE(s + 16, XOR128(LOAD(s + 16), LOAD(m + 16)));
         haraka512_perm_NI(s, HARAKAS_RATE, s, HARAKAS_RATE);
         mlen -= r;
         m += r;
@@ -199,13 +203,20 @@ static void haraka_S_absorb_NI(unsigned char *s, unsigned int r,
     memset(t, 0, r);
 
     memcpy(t, m, mlen);
-
-    t[i] = p;
+    
+    //t[i] = p;
+    t[mlen -1] = p;
+    
     t[r - 1] |= 128;
+
+    /*
     for (i = 0; i < r; ++i)
     {
         s[i] ^= t[i];
     }
+    */
+    STORE(s, XOR128(LOAD(s), LOAD(t)));
+    STORE(s + 16, XOR128(LOAD(s + 16), LOAD(t + 16)));
 }
 
 static void haraka_S_squeezeblocks(unsigned char *h, unsigned long long nblocks,
@@ -242,10 +253,20 @@ static void haraka_1024S_absorb_NI(unsigned char *s, unsigned int r,
     while (mlen >= r)
     {
         // XOR block to state
+        /*
         for (i = 0; i < r; ++i)
         {
             s[i] ^= m[i];
         }
+        */
+        
+        STORE(s, XOR128(LOAD(s), LOAD(m)));
+        STORE(s + 16, XOR128(LOAD(s + 16), LOAD(m + 16)));
+        STORE(s + 32, XOR128(LOAD(s + 32), LOAD(m + 32)));
+        STORE(s + 48, XOR128(LOAD(s + 48), LOAD(m + 48)));
+        STORE(s + 64, XOR128(LOAD(s + 64), LOAD(m + 64)));
+        STORE(s + 80, XOR128(LOAD(s + 80), LOAD(m + 80)));
+        
         haraka1024_perm_NI(s, SPONGE_B, s, SPONGE_B);
         mlen -= r;
         m += r;
@@ -255,13 +276,24 @@ static void haraka_1024S_absorb_NI(unsigned char *s, unsigned int r,
 
     memcpy(t, m, mlen);
 
-    t[i] = p;
+    //t[i] = p;
+    t[mlen -1] = p;
+
     t[r - 1] |= 128;
 
+    /*
     for (i = 0; i < r; ++i)
     {
         s[i] ^= t[i];
     }
+    */
+
+    STORE(s, XOR128(LOAD(s), LOAD(t)));
+    STORE(s + 16, XOR128(LOAD(s + 16), LOAD(t + 16)));
+    STORE(s + 32, XOR128(LOAD(s + 32), LOAD(t + 32)));
+    STORE(s + 48, XOR128(LOAD(s + 48), LOAD(t + 48)));
+    STORE(s + 64, XOR128(LOAD(s + 64), LOAD(t + 64)));
+    STORE(s + 80, XOR128(LOAD(s + 80), LOAD(t + 80)));
 }
 
 static void haraka_1024S_squeezeblocks_NI(unsigned char *h, unsigned long long nblocks,

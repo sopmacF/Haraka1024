@@ -59,13 +59,13 @@ int main()
 {
 
   // simple constructions
-  printf("Haraka-512/NI   64 -> 32     %f cycles \n", timeit(haraka512, 64, 32));
-  printf("Haraka-768/NI   96 -> 32     %f cycles \n", timeit(haraka768, 96, 32));
-  printf("Haraka-1024/NI 128 -> 32     %f cycles \n", timeit(haraka1024, 128, 32));
+  printf("Haraka-512/NI   64 -> 32    %f cycles \n", timeit(haraka512, 64, 32));
+  printf("Haraka-768/NI   96 -> 32    %f cycles \n", timeit(haraka768, 96, 32));
+  printf("Haraka-1024/NI 128 -> 32    %f cycles \n", timeit(haraka1024, 128, 32));
 
   // only the permutation part
-  printf("haraka512_perm_NI            %f cycles \n", timeit(haraka512_perm_NI, 64, 64));
-  printf("haraka1024_perm_NI           %f cycles \n", timeit(haraka1024_perm_NI, 128, 128));
+  printf("haraka512_perm_NI           %f cycles \n", timeit(haraka512_perm_NI, 64, 64));
+  printf("haraka1024_perm_NI          %f cycles \n", timeit(haraka1024_perm_NI, 128, 128));
 
   // sponge constructions
   printf("Haraka-512_S/NI  128 -> 32  %f cycles \n", timeit(haraka_S_NI, 128, 32));
