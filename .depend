@@ -1,0 +1,2 @@
+main.o: main.c haraka.h timing.h
+haraka.o: haraka.c haraka.h
