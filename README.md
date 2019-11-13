@@ -1,13 +1,17 @@
 # Haraka1024
 
-Expand Haraka https://github.com/kste/haraka by adding a Haraka-1024 function, which maps 1024 to 256 bits. The sponge version of Haraka (Haraka_S) is based on the implementation from SPHINCS+ (available here https://sphincs.org/software.html).
+Expand Haraka https://github.com/kste/haraka by adding a Haraka-1024 function, which maps 1024 to 256 bits. The sponge version of Haraka (Haraka_S) is based on the implementation from SPHINCS+ (available here https://sphincs.org/software.html). Our construction match the security level of SHAKE256 (https://keccak.team/specifications.html#FIPS_202).
 
 # Results
 
-Version                      | clock cycles
------------------------------|---------------------
-Haraka-512/AES_NI            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;65.378000 cycles
-Haraka-1024/AES_NI           |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;208.441000 cycles (our implementation)
-Haraka-1024/AES_NI (3x 512)  |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;230.070000 cycles
-Haraka-1024_S sponge/AES_NI  |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;493.704000 cycles
-Haraka-1024_S sponge         |&nbsp;&nbsp;18361.418000 cycles (without AES-NI support)
+version            | input -> output (bytes) |  type        | clock cycles@x86
+-------------------|-------------------------|--------------|--------------------
+Haraka-512/NI      |            64 ->  32    | simple       |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;59.349000 cycles
+Haraka-768/NI      |            96 ->  32    | simple       |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;116.693000 cycles (our implementation)
+Haraka-1024/NI     |      128 ->  32         | simple       |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;142.860000 cycles (our implementation)
+haraka512_perm_NI  |            64 ->  64    | permutation  |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;56.052000 cycles
+haraka1024_perm_NI |      128 -> 128         | permutation  |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;132.604000 cycles (our implementation)
+Haraka-512_S/NI    |      128 ->  32         | sponge       |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;372.369000 cycles
+Haraka-1024_S/NI   |      128 ->  32         | sponge       |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;399.046000 cycles (our implementation)
+Haraka-512_S/NI    |            96 ->  32    | sponge       |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;302.432000 cycles
+Haraka-1024_S/NI   |            96 ->  32    | sponge       |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;397.781000 cycles (our implementation)

@@ -11,7 +11,8 @@ Timing code for optimized implementation of Haraka.
 typedef void (*hash_function)(unsigned char *out, unsigned long long outlen, const unsigned char *in, unsigned long long inlen);
 
 // Measures how many cycles func requires to process a random input.
-double timeit(hash_function func, int inlen, int outlen) {
+double timeit(hash_function func, int inlen, int outlen)
+{
   unsigned char *in, *out;
   unsigned long long timer = 0;
   double timings[NUM_TIMINGS];
@@ -24,20 +25,34 @@ double timeit(hash_function func, int inlen, int outlen) {
 
   load_constants();
 
+<<<<<<< HEAD
   for (i = -100; i < NUM_TIMINGS; i++) {
   //for (i = 0; i < NUM_TIMINGS; i++) {
+=======
+  for (i = -100; i < NUM_TIMINGS; i++)
+  {
+    //for (i = 0; i < NUM_TIMINGS; i++) {
+>>>>>>> 873e57bb4708c4cda7813c668a4730a6a779a8be
     //Get random input
-    for (j = 0; j < inlen; j++) {
+    for (j = 0; j < inlen; j++)
+    {
       in[j] = rand() & 0xff;
     }
 
     timer = startTimer();
+<<<<<<< HEAD
     for(j = 0; j < ITERATIONS; j++) {
         func(out, outlen, in, inlen);
+=======
+    for (j = 0; j < ITERATIONS; j++)
+    {
+      func(out, outlen, in, inlen);
+>>>>>>> 873e57bb4708c4cda7813c668a4730a6a779a8be
     }
     timer = endTimer() - timer;
 
-    if (i >= 0 && i < NUM_TIMINGS) {
+    if (i >= 0 && i < NUM_TIMINGS)
+    {
       timings[i] = ((double)timer) / ITERATIONS;
     }
   }
@@ -50,12 +65,10 @@ double timeit(hash_function func, int inlen, int outlen) {
   return timings[NUM_TIMINGS / 2];
 }
 
-int main() {
-  //test_implementations();
-  //printf("Haraka-256          1x: %f cycles \n", timeit(haraka256, 32, 32));
-  //printf("Haraka-256          4x: %f cycles \n", timeit(haraka256_4x, 4*32, 4*32));
-  //printf("Haraka-256          8x: %f cycles \n", timeit(haraka256_8x, 8*32, 8*32));
+int main()
+{
 
+<<<<<<< HEAD
   printf("Haraka-512/NI   64 -> 32     %f cycles \n", timeit(haraka512, 64, 32));
   printf("Haraka-768/NI   96 -> 32     %f cycles \n", timeit(haraka768, 96, 32));
   printf("Haraka-1024/NI 128 -> 32     %f cycles \n", timeit(haraka1024, 128, 32));
@@ -76,6 +89,20 @@ int main() {
 
 
   
+=======
+  // simple constructions
+  printf("Haraka-512/NI   64 -> 32    %f cycles \n", timeit(haraka512, 64, 32));
+  printf("Haraka-768/NI   96 -> 32    %f cycles \n", timeit(haraka768, 96, 32));
+  printf("Haraka-1024/NI 128 -> 32    %f cycles \n", timeit(haraka1024, 128, 32));
 
+  // only the permutation part
+  printf("haraka512_perm_NI           %f cycles \n", timeit(haraka512_perm_NI, 64, 64));
+  printf("haraka1024_perm_NI          %f cycles \n", timeit(haraka1024_perm_NI, 128, 128));
+>>>>>>> 873e57bb4708c4cda7813c668a4730a6a779a8be
+
+  // sponge constructions
+  printf("Haraka-512_S/NI  128 -> 32  %f cycles \n", timeit(haraka_S_NI, 128, 32));
+  printf("Haraka-1024_S/NI 128 -> 32  %f cycles \n", timeit(haraka_1024S, 128, 32));
+  printf("Haraka-512_S/NI   96 -> 32  %f cycles \n", timeit(haraka_S_NI, 96, 32));
+  printf("Haraka-1024_S/NI  96 -> 32  %f cycles \n", timeit(haraka_1024S, 96, 32));
 }
-
