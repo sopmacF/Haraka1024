@@ -4,7 +4,7 @@ RM=rm -f
 CFLAGS=-Wall -Wextra -Wpedantic -O3 -march=native -funroll-all-loops -fomit-frame-pointer -Wint-conversion
 SRCS=main.c haraka.c
 OBJS=$(subst .c,.o,$(SRCS))
-OUTFILE="haraka"
+OUTFILE="./haraka"
 
 all: haraka
 

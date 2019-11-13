@@ -1,6 +1,9 @@
 #ifndef TIMING_H
 #define TIMING_H
 
+//#define NUM_TIMINGS 1
+//#define ITERATIONS 1
+
 #define NUM_TIMINGS 10000
 #define ITERATIONS 1000
 

@@ -2,6 +2,11 @@
 #include <stdio.h>
 
 #define HARAKAS_RATE 32
+#define HARAKAS_1024_RATE 96 // (1024/8) - 32 (capacity of Haraka_S)
+#define SPONGE_B 128            // state size 1024 bits
+#define SPONGE_CAPACITY 32      // c
+#define SPONGE_RATE 96          // block size = SPONGE_B - SPONGE_CAPACITY
+#define SPONGE_OUTPUT_LEN 32    // desired output lenght
 
 static const unsigned char haraka_rc[40][16] = {
     {0x9d, 0x7b, 0x81, 0x75, 0xf0, 0xfe, 0xc5, 0xb2, 0x0a, 0xc0, 0x20, 0xe6, 0x4c, 0x70, 0x84, 0x06},
@@ -178,17 +183,15 @@ static void haraka_S_absorb_NI(unsigned char *s, unsigned int r,
         for (i = 0; i < r; ++i) {
             s[i] ^= m[i];
         }
-        haraka512_perm_NI(s, s);
+        haraka512_perm_NI(s, HARAKAS_RATE, s, HARAKAS_RATE);
         mlen -= r;
         m += r;
     }
 
-    for (i = 0; i < r; ++i) {
-        t[i] = 0;
-    }
-    for (i = 0; i < mlen; ++i) {
-        t[i] = m[i];
-    }
+    memset(t, 0, r);
+
+    memcpy(t, m, mlen);
+
     t[i] = p;
     t[r - 1] |= 128;
     for (i = 0; i < r; ++i) {
@@ -212,24 +215,98 @@ static void haraka_S_squeezeblocks_NI(unsigned char *h, unsigned long long nbloc
                                    unsigned char *s, unsigned int r)
 {
     while (nblocks > 0) {
-        haraka512_perm_NI(s, s);
+        haraka512_perm_NI(s, HARAKAS_RATE, s, HARAKAS_RATE);
         memcpy(h, s, HARAKAS_RATE);
         h += r;
         nblocks--;
     }
 }
 
-void haraka_1024S(unsigned char *out,  const unsigned char *in)
+static void haraka_1024S_absorb_NI(unsigned char *s, unsigned int r,
+                            const unsigned char *m, unsigned long long mlen,
+                            unsigned char p)
 {
-	unsigned long long outlen = 32;
-	unsigned long long inlen = 128;
     unsigned long long i;
+    unsigned char t[r];
+
+    while (mlen >= r) {
+        // XOR block to state
+        for (i = 0; i < r; ++i) {
+            s[i] ^= m[i];
+        }
+        haraka1024_perm_NI(s, SPONGE_B, s, SPONGE_B);
+        mlen -= r;
+        m += r;
+    }
+
+    memset(t, 0, r);
+
+    memcpy(t, m, mlen);
+
+    t[i] = p;
+    t[r - 1] |= 128;
+
+    for (i = 0; i < r; ++i) {
+        s[i] ^= t[i];
+    }
+}
+
+static void haraka_1024S_squeezeblocks_NI(unsigned char *h, unsigned long long nblocks,
+                                   unsigned char *s, unsigned int r)
+{
+    while (nblocks > 0) {
+        haraka1024_perm_NI(s, SPONGE_B, s, SPONGE_B);
+        memcpy(h, s, r);
+        h += r;
+        nblocks--;
+    }
+}
+
+void haraka_1024S(unsigned char *out, unsigned long long outlen,
+              const unsigned char *in, unsigned long long inlen)
+{
+    //unsigned long long i;
+    unsigned char s[SPONGE_B];
+    unsigned char d[SPONGE_OUTPUT_LEN];
+
+    /*
+    for (i = 0; i < SPONGE_B; i++) {
+        s[i] = 0;
+    }
+    */
+    memset(s, 0, SPONGE_B);
+
+    haraka_1024S_absorb_NI(s, SPONGE_RATE, in, inlen, 0x1F);
+
+    haraka_1024S_squeezeblocks_NI(out, outlen / SPONGE_RATE, s, SPONGE_RATE);
+    out += (outlen / SPONGE_RATE) * SPONGE_RATE;
+
+    if (outlen % SPONGE_RATE) {
+        haraka_1024S_squeezeblocks_NI(d, 1, s, SPONGE_OUTPUT_LEN);
+
+        memcpy(out, d, outlen % SPONGE_RATE);
+        /*
+        for (i = 0; i < outlen % SPONGE_RATE; i++) {
+            out[i] = d[i];
+        }
+        */
+    }
+}
+
+void haraka_S(unsigned char *out, unsigned long long outlen,
+              const unsigned char *in, unsigned long long inlen)
+{
+    //unsigned long long i;
     unsigned char s[64];
     unsigned char d[32];
 
+    /*
     for (i = 0; i < 64; i++) {
         s[i] = 0;
     }
+    */
+    memset(s, 0, 64);
+
     haraka_S_absorb(s, 32, in, inlen, 0x1F);
 
     haraka_S_squeezeblocks(out, outlen / 32, s, 32);
@@ -237,16 +314,19 @@ void haraka_1024S(unsigned char *out,  const unsigned char *in)
 
     if (outlen % 32) {
         haraka_S_squeezeblocks(d, 1, s, 32);
+
+        memcpy(out, d,  outlen % 32);
+        /*
         for (i = 0; i < outlen % 32; i++) {
             out[i] = d[i];
         }
+        */
     }
 }
 
-void haraka_1024S_NI(unsigned char *out,  const unsigned char *in)
+void haraka_S_NI(unsigned char *out, unsigned long long outlen,
+              const unsigned char *in, unsigned long long inlen)
 {
-	unsigned long long outlen = 32;
-	unsigned long long inlen = 128;
     unsigned long long i;
     unsigned char s[64];
     unsigned char d[32];
@@ -267,32 +347,11 @@ void haraka_1024S_NI(unsigned char *out,  const unsigned char *in)
     }
 }
 
-void haraka_S(unsigned char *out, unsigned long long outlen,
+void haraka512_perm_NI(unsigned char *out, unsigned long long outlen,
               const unsigned char *in, unsigned long long inlen)
 {
-    unsigned long long i;
-    unsigned char s[64];
-    unsigned char d[32];
-
-    for (i = 0; i < 64; i++) {
-        s[i] = 0;
-    }
-    haraka_S_absorb(s, 32, in, inlen, 0x1F);
-
-    haraka_S_squeezeblocks(out, outlen / 32, s, 32);
-    out += (outlen / 32) * 32;
-
-    if (outlen % 32) {
-        haraka_S_squeezeblocks(d, 1, s, 32);
-        for (i = 0; i < outlen % 32; i++) {
-            out[i] = d[i];
-        }
-    }
-}
-
-void haraka512_perm_NI(unsigned char *out, const unsigned char *in)
-{
-	  u128 s[4], tmp;
+	  //printf(">>haraka512_perm_NI\n");
+      u128 s[4], tmp;
 
 	  s[0] = LOAD(in);
 	  s[1] = LOAD(in + 16);
@@ -709,7 +768,9 @@ void haraka256_8x(unsigned char *out, const unsigned char *in) {
   // STORE(out + 240, s[7][1]);
 }
 
-void haraka512(unsigned char *out, const unsigned char *in) {
+//void haraka512(unsigned char *out, const unsigned char *in) 
+void haraka512(unsigned char *out, unsigned long long outlen, const unsigned char *in, unsigned long long inlen)
+{
   u128 s[4], tmp;
 
   s[0] = LOAD(in);
@@ -740,17 +801,57 @@ void haraka512(unsigned char *out, const unsigned char *in) {
   TRUNCSTORE(out, s[0], s[1], s[2], s[3]);
 }
 
+/*
 void haraka1024_split(unsigned char *out, const unsigned char *in) {
 	unsigned char tmp[32];
 	unsigned char tmp2[32];
-	haraka512(tmp, in);
-	haraka512(tmp2, in);
+	haraka512(tmp, 32, in, 64);
+	haraka512(tmp2, 32, in, 64);
 	memcpy(in, tmp, 32*sizeof(unsigned char));
 	memcpy(in + 32, tmp2, 32*sizeof(unsigned char));
-	haraka512(out, in);
+	haraka512(out, 32, in, 64);
+}
+*/
+
+void haraka768(unsigned char *out, unsigned long long outlen, const unsigned char *in, unsigned long long inlen)
+{
+	  u128 s[6], tmp0, tmp1, tmp2;
+
+	  s[0] = LOAD(in);
+	  s[1] = LOAD(in + 16);
+	  s[2] = LOAD(in + 32);
+	  s[3] = LOAD(in + 48);
+	  s[4] = LOAD(in + 64);
+	  s[5] = LOAD(in + 80);
+
+	  AES6(s[0], s[1], s[2], s[3], s[4], s[5], 0);
+	  MIX6(s[0], s[1], s[2], s[3], s[4], s[5]);
+
+	  AES6(s[0], s[1], s[2], s[3], s[4], s[5], 16);
+	  MIX6(s[0], s[1], s[2], s[3], s[4], s[5]);
+
+	  AES6(s[0], s[1], s[2], s[3], s[4], s[5], 32);
+	  MIX6(s[0], s[1], s[2], s[3], s[4], s[5]);
+
+	  AES6(s[0], s[1], s[2], s[3], s[4], s[5], 48);
+	  MIX6(s[0], s[1], s[2], s[3], s[4], s[5]);
+
+	  AES6(s[0], s[1], s[2], s[3], s[4], s[5], 64);
+	  MIX6(s[0], s[1], s[2], s[3], s[4], s[5]);
+
+	  s[0] = _mm_xor_si128(s[0], LOAD(in));
+	  s[1] = _mm_xor_si128(s[1], LOAD(in + 16));
+	  s[2] = _mm_xor_si128(s[2], LOAD(in + 32));
+	  s[3] = _mm_xor_si128(s[3], LOAD(in + 48));
+	  s[4] = _mm_xor_si128(s[4], LOAD(in + 64));
+	  s[5] = _mm_xor_si128(s[5], LOAD(in + 80));
+
+	  TRUNCSTORE3(out, s[0], s[1], s[2], s[3], s[4], s[5]);
 }
 
-void haraka1024(unsigned char *out, const unsigned char *in) {
+
+void haraka1024(unsigned char *out, unsigned long long outlen, const unsigned char *in, unsigned long long inlen)
+{
 	  u128 s[8], tmp0, tmp1, tmp2, tmp3;
 
 	  s[0] = LOAD(in);
@@ -787,6 +888,55 @@ void haraka1024(unsigned char *out, const unsigned char *in) {
 	  s[7] = _mm_xor_si128(s[7], LOAD(in + 112));
 
 	  TRUNCSTORE4(out, s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
+}
+
+void haraka1024_perm_NI(unsigned char *out, unsigned long long outlen, const unsigned char *in, unsigned long long inlen)
+{
+      //printf(">>haraka1024_perm_NI\n");
+      u128 s[8], tmp0, tmp1, tmp2, tmp3;
+
+	  s[0] = LOAD(in);
+	  s[1] = LOAD(in + 16);
+	  s[2] = LOAD(in + 32);
+	  s[3] = LOAD(in + 48);
+	  s[4] = LOAD(in + 64);
+	  s[5] = LOAD(in + 80);
+	  s[6] = LOAD(in + 96);
+	  s[7] = LOAD(in + 112);
+
+	  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 0);
+	  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
+
+	  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 16);
+	  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
+
+	  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 32);
+	  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
+
+	  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 48);
+	  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
+
+	  AES8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], 64);
+	  MIX8(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
+
+	  s[0] = _mm_xor_si128(s[0], LOAD(in));
+	  s[1] = _mm_xor_si128(s[1], LOAD(in + 16));
+	  s[2] = _mm_xor_si128(s[2], LOAD(in + 32));
+	  s[3] = _mm_xor_si128(s[3], LOAD(in + 48));
+	  s[4] = _mm_xor_si128(s[4], LOAD(in + 64));
+	  s[5] = _mm_xor_si128(s[5], LOAD(in + 80));
+	  s[6] = _mm_xor_si128(s[6], LOAD(in + 96));
+	  s[7] = _mm_xor_si128(s[7], LOAD(in + 112));
+
+      (void) STORE(out, s[0]);
+      (void) STORE(out+16, s[1]);
+      (void) STORE(out+32, s[2]);
+      (void) STORE(out+48, s[3]);
+      (void) STORE(out+64, s[4]);
+      (void) STORE(out+80, s[5]);
+      (void) STORE(out+96, s[6]);
+      (void) STORE(out+112, s[7]);
+
 }
 
 
