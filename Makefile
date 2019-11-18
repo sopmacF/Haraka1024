@@ -1,3 +1,4 @@
+
 C=gcc
 RM=rm -f
 #CFLAGS=-w -O3 -march=native -funroll-all-loops -fomit-frame-pointer
